@@ -99,3 +99,5 @@ _bt() {
         *)               ;;
     esac
 }
+
+complete -F _bt bt
