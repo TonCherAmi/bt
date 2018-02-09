@@ -1,0 +1,157 @@
+#!/usr/bin/env sh
+# 
+# Copyright © 2018 Vasili Karaev
+# 
+# This file is part of bt.
+#
+# bt is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bt is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bt.  If not, see <http://www.gnu.org/licenses/>.
+
+version="0.1"
+progname="$(basename $0)"
+
+btclient="deluge-console"
+
+usage() {
+    echo "\
+Usage: $progname [-v] [-h] <command> [<options>]
+
+available commands:
+    add:     add a torrent.
+    search:  search for a torrent.
+    ls:      list existing torrents.
+    rm:      remove a torrent."
+}
+
+version() {
+    echo "$progname: version $version"
+}
+
+die() {
+    echo "$progname: $@" >&2
+    exit 1
+}
+
+add() {
+    local opts=":t:d:"
+
+    while getopts "$opts" opt; do
+        case "$opt" in
+            t)
+                torr=\""$BT_TORR_DIR$OPTARG"\"
+                ;;
+            d)
+                dest=\""$BT_DEST_DIR$OPTARG"\"
+                dest="-p $dest"
+                ;;
+            \?)
+                die "invalid option: $OPTARG"
+                ;;
+            :)
+                die "option -$OPTARG requires an argument"
+        esac
+    done
+
+    if [ -z "$torr" ]; then
+        die "option -t is required"
+    fi
+
+    $btclient add "$torr" "$dest"
+}
+
+search() {
+    if [ -z "$@" ]; then
+        die "insufficient arguments"
+    fi
+
+    $btclient info | grep -i -A 5 -- "$@"
+}
+
+list() {
+    local opts=":adeqs"
+
+    local states
+
+    while getopts "$opts" opt; do
+        case "$opt" in
+            a)
+                states="Active $states"
+                ;;
+            d)
+                states="Downloading $states"
+                ;;
+            e)
+                states="Error $states"
+                ;;
+            q)
+                states="Queued $states"
+                ;;
+            s)
+                states="Seeding $states"
+                ;;
+            \?)
+                die "invalid option: $OPTARG"
+                ;;
+        esac
+    done
+
+    local list
+
+    if [ -z "$states" ]; then
+        list="$(eval $btclient info)\n"
+    else
+        for x in $states; do
+            local per_state_list
+
+            per_state_list="$(eval $btclient info -s $x)"
+
+            list="$per_state_list\n$list"
+        done
+
+        list="$(echo "$list" | tail -n +2)"
+    fi
+
+    echo -en "$list"
+}
+
+remove() {
+    die "not implemented quite yet"
+}
+
+if [ -z "$BT_TORR_DIR" ] || [ -z "$BT_DEST_DIR" ]; then
+    die "environment variables not set: aborting"
+fi
+
+subcommand="$1"
+shift
+
+case "$subcommand" in
+    -h)
+        usage
+        ;;
+    -v)
+        version
+        ;;
+    add)
+        add "$@"
+        ;;
+    search)
+        search "$@"
+        ;;
+    list)
+        list "$@"
+        ;;
+    \?)
+        die "invalid subcommand: $subcommand"
+        ;;
+esac
