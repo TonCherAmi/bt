@@ -142,14 +142,8 @@ case "$subcommand" in
     -v)
         version
         ;;
-    add)
-        add "$@"
-        ;;
-    search)
-        search "$@"
-        ;;
-    list)
-        list "$@"
+	add|search|list)
+		$subcommand "$@"
         ;;
     \?)
         die "invalid subcommand: $subcommand"
