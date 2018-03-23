@@ -18,9 +18,6 @@
 __escape_strings_stdin() {
     sed 's/\(.*\)/\"\1\"/g'
 }
-__get_long_cur() {
-    cur="$(echo "${COMP_LINE#*$command}" | sed 's/^ *//')"
-}
 
 _bt_commands() {
     commands="add search list remove"
