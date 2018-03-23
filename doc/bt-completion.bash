@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with bt.  If not, see <http://www.gnu.org/licenses/>.
 
-__escape_strings_stdin() {
+__bt_escape_strings_stdin() {
     sed 's/\(.*\)/\"\1\"/g'
 }
 
@@ -40,11 +40,11 @@ _bt_add() {
     case "$prev" in
         -t)
             COMPREPLY=($(compgen -W "$(eval "$ls1" "$BT_TORR_DIR")" -- "$cur" \
-                         | __escape_strings_stdin))
+                         | __bt_escape_strings_stdin))
             ;;
         -d)
             COMPREPLY=($(compgen -W "$(eval "$ls1" "$BT_DEST_DIR")" -- "$cur" \
-                         | __escape_strings_stdin))
+                         | __bt_escape_strings_stdin))
             ;;
         *)
             ;;
