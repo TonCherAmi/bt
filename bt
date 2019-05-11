@@ -51,10 +51,10 @@ add() {
                 torr=\""$OPTARG"\"
                 ;;
             t)
-                torr=\""$BT_TORR_DIR$OPTARG"\"
+                torr=\""$BT_TORR_DIR/$OPTARG"\"
                 ;;
             d)
-                dest=\""$BT_DEST_DIR$OPTARG"\"
+                dest=\""$BT_DEST_DIR/$OPTARG"\"
                 dest="-p $dest"
                 ;;
             \?)
