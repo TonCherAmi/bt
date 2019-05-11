@@ -1,4 +1,4 @@
-# Copyright © 2018 Vasili Karaev
+# Copyright © 2018-2019 Vasili Karaev
 # 
 # This file is part of bt.
 #
