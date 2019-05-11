@@ -26,7 +26,7 @@ _bt_commands() {
 }
 
 _bt_add() {
-    local opts="-t -d"
+    local opts="-m -t -d"
 
     if [[ "$cur" == -* ]]; then
         COMPREPLY=($(compgen -W "$opts" -- "${cur}"))

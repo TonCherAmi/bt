@@ -43,10 +43,13 @@ die() {
 }
 
 add() {
-    local opts=":t:d:"
+    local opts=":m:t:d:"
 
     while getopts "$opts" opt; do
         case "$opt" in
+            m)
+                torr=\""$OPTARG"\"
+                ;;
             t)
                 torr=\""$BT_TORR_DIR$OPTARG"\"
                 ;;
@@ -63,7 +66,7 @@ add() {
     done
 
     if [ -z "$torr" ]; then
-        die "option -t is required"
+        die "torrent source (-m|-t) is required"
     fi
 
     $btclient add "$torr" "$dest"
